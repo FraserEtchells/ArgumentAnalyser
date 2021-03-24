@@ -218,21 +218,24 @@ def component_count_feedback(data, essay):
     average_major_claims_to_claims = average_ratio_tuple[0]
     average_premises_to_claims = average_ratio_tuple[1]
     
-    print("Your essay has", essay_component_count_tuple[0],"Major Claims,",essay_component_count_tuple[1], "Claims and", essay_component_count_tuple[2],"Premises.")
-    print("Your essay has a ratio of", major_claims_to_claims, "of Claims to Major Claims.")#Want a higher ratio
-    print("On average, essays we have seen have a ratio of",average_major_claims_to_claims )
+    feedback = []
+    feedback.append("Your essay has " + str(essay_component_count_tuple[0]) +" Major Claims," + str(essay_component_count_tuple[1]) + " Claims and " + str(essay_component_count_tuple[2]) + " Premises.")
+    feedback.append("Your essay has a ratio of " + str(major_claims_to_claims) + " of Claims to Major Claims.")#Want a higher ratio
+    feedback.append("On average, essays we have seen have a ratio of " + str(average_major_claims_to_claims) )
     if major_claims_to_claims - average_major_claims_to_claims > -0.1 and major_claims_to_claims - average_major_claims_to_claims < 0.1:
-        print("This is good - it means you have a good amount of sub-arguments to support your overall thesis.")
+        feedback.append("This is good - it means you have a good amount of sub-arguments to support your overall thesis.")
     elif major_claims_to_claims - average_major_claims_to_claims < -0.1:
-        print("This is not great - you may have too few arguments to support your overall thesis.")
+        feedback.append("This is not great - you may have too few arguments to support your overall thesis.")
     elif major_claims_to_claims - average_major_claims_to_claims > 0.1:
-        print("While you have a lot of Claims to Major Claims, be aware that having too many claims may unfocus your thesis statement.")
-    print("Your essay has a ratio of", premises_to_claims, "of Premises to Claims.") #Want a higher ratio
-    print("On average, essays we have seen have a ratio of", average_premises_to_claims)
+        feedback.append("While you have a lot of Claims to Major Claims, be aware that having too many claims may unfocus your thesis statement.")
+    feedback.append("Your essay has a ratio of " + str(premises_to_claims) + " of Premises to Claims.") #Want a higher ratio
+    feedback.append("On average, essays we have seen have a ratio of"+ str(average_premises_to_claims))
     if premises_to_claims - average_premises_to_claims < 0.1:
-        print("This is not great. Generally, we want more premises than claims in order to give better justification to our points.")
+        feedback.append("This is not great. Generally, we want more premises than claims in order to give better justification to our points.")
     elif premises_to_claims - average_premises_to_claims > -0.1:
-        print("This is good - it means on average you have a lot of support for your points.")
+        feedback.append("This is good - it means on average you have a lot of support for your points.")
+        
+    return feedback
 
 
 def paragraph_component_count_feedback(data, essay):
@@ -266,54 +269,56 @@ def paragraph_component_count_feedback(data, essay):
     average_paragraph_major_claims_to_claims = average_paragraph_ratio_tuple[0]
     average_paragraph_premises_to_claims = average_paragraph_ratio_tuple[1]
     
-    print("The introduction has", essay_introduction_component_tuple[1], "Major Claims,", essay_introduction_component_tuple[2], "Claims and", essay_introduction_component_tuple[3], "Premises")
-    print("The introduction has a ratio of", introduction_major_claims_to_claims, "of Claims to Major Claims and a ratio of", introduction_premises_to_claims, "of Premises to Claims" )
-    print("On average, essays we have seen have a ratio of",average_introduction_major_claims_to_claims,"of Claims to Major Claims and a ratio of", average_introduction_premises_to_claims, "of Premises to Claims")
+    feedback = []
+    feedback.append("The introduction has " + str(essay_introduction_component_tuple[1]) + " Major Claims, " +  str(essay_introduction_component_tuple[2]) + " Claims and "+ str(essay_introduction_component_tuple[3]) + "Premises")
+    feedback.append("The introduction has a ratio of "+ str(introduction_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str (introduction_premises_to_claims) + " of Premises to Claims" )
+    feedback.append("On average, essays we have seen have a ratio of " + str(average_introduction_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(average_introduction_premises_to_claims) + " of Premises to Claims")
     
     if(introduction_major_claims_to_claims - average_introduction_major_claims_to_claims > -1 and introduction_major_claims_to_claims - average_introduction_major_claims_to_claims < 1.1):
-        print("Your Claims to Major Claims ratio is good - generally we want less Claims and more Major Claims in an introduction, but having the same number is fine.")
+        feedback.append("Your Claims to Major Claims ratio is good - generally we want less Claims and more Major Claims in an introduction, but having the same number is fine.")
     elif(introduction_major_claims_to_claims - average_introduction_major_claims_to_claims > 1.1):
-        print("Your Claims to Major Claims ratio is not good - having too many claims and not many Major Claims in your introduction makes your structure messier.")
+        feedback.append("Your Claims to Major Claims ratio is not good - having too many claims and not many Major Claims in your introduction makes your structure messier.")
         
     if(introduction_premises_to_claims - average_introduction_premises_to_claims < 1):
-        print("Your Premises to Claims ratio is good - this means that you are keeping your introduction focussed on your thesis statement.")
+        feedback.append("Your Premises to Claims ratio is good - this means that you are keeping your introduction focussed on your thesis statement.")
     elif(introduction_premises_to_claims - average_introduction_premises_to_claims > 1):
-        print("Your Premises to Claims ratio is not good - aim to have 1 or 0 premises in your introduction. The introduction should be primarily used to summarise your thesis.")
+        feedback.append("Your Premises to Claims ratio is not good - aim to have 1 or 0 premises in your introduction. The introduction should be primarily used to summarise your thesis.")
         
     for i in range(len(essay_paragraph_tuple_list)):
-        print("Paragraph", essay_paragraph_tuple_list[i][0], "has", essay_paragraph_tuple_list[i][1], "Major Claims,", essay_paragraph_tuple_list[i][2], "Claims and", essay_paragraph_tuple_list[i][3], "Premises")
+        feedback.append("Paragraph " + str(essay_paragraph_tuple_list[i][0]) + " has " + str(essay_paragraph_tuple_list[i][1]) + " Major Claims, " + str(essay_paragraph_tuple_list[i][2]) + " Claims and " + str(essay_paragraph_tuple_list[i][3]) + " Premises.")
         paragraph_ratio_tuple = get_component_ratios(essay_paragraph_tuple_list[i], True)
         paragraph_major_claims_to_claims = paragraph_ratio_tuple[0]
         paragraph_premises_to_claims = paragraph_ratio_tuple[1]
-        print("This Paragraph has a ratio of", paragraph_major_claims_to_claims, "of Claims to Major Claims and a ratio of", paragraph_premises_to_claims, "of Premises to Claims")
-        print("On average, essays we have seen have a ratio of", average_paragraph_major_claims_to_claims, "of Claims to Major Claims and a ratio of", average_paragraph_premises_to_claims, "of Premises to Claims")
+        feedback.append("This Paragraph has a ratio of " + str(paragraph_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(paragraph_premises_to_claims) + " of Premises to Claims")
+        feedback.append("On average, essays we have seen have a ratio of " + str(average_paragraph_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(average_paragraph_premises_to_claims) + " of Premises to Claims")
         
         if(paragraph_major_claims_to_claims - average_paragraph_major_claims_to_claims > 0):
-            print("Your Claims to Major Claims ratio is good - generally we want no Major Claims in any of our main body paragraphs.")
+            feedback.append("Your Claims to Major Claims ratio is good - generally we want no Major Claims in any of our main body paragraphs.")
         elif(paragraph_major_claims_to_claims - average_paragraph_major_claims_to_claims < 0):
-            print("Your Claims to Major Claims ratio is poor - this may be due to an error in our system, or you have a Major Claim in a main body paragraph. Try to remove it, or re-word the claim you are presenting.")
+            feedback.append("Your Claims to Major Claims ratio is poor - this may be due to an error in our system, or you have a Major Claim in a main body paragraph. Try to remove it, or re-word the claim you are presenting.")
     
         if(paragraph_premises_to_claims - average_paragraph_premises_to_claims > -1 and paragraph_premises_to_claims - average_paragraph_premises_to_claims < 2):
-            print("Your Premises to Claims ratio is great - each Claim needs roughly 3 to 4 Premises to properly back it up.")
+            feedback.append("Your Premises to Claims ratio is great - each Claim needs roughly 3 to 4 Premises to properly back it up.")
         elif(paragraph_premises_to_claims - average_paragraph_premises_to_claims < -1):
-            print("Your Premises to Claims ratio is poor - you should aim to add more Premises to this Claim in order to give it proper justification.")
+            feedback.append("Your Premises to Claims ratio is poor - you should aim to add more Premises to this Claim in order to give it proper justification.")
         elif(paragraph_premises_to_claims - average_paragraph_premises_to_claims > 2):
-            print("Your Premises to Claims ratio is higher than average - if you have a limited word count you may be better removing some of your premises in this paragraph and either create a new paragraph to support the overall thesis, or add more Premises to another paragraph.")
+            feedback.append("Your Premises to Claims ratio is higher than average - if you have a limited word count you may be better removing some of your premises in this paragraph and either create a new paragraph to support the overall thesis, or add more Premises to another paragraph.")
         
-    print("The conclusion has", essay_conclusion_component_tuple[1], "Major Claims,", essay_conclusion_component_tuple[2], "Claims and", essay_conclusion_component_tuple[3], "Premises")
-    print("The conclusion has a ratio of", conclusion_major_claims_to_claims, "of Claims to Major Claims and a ratio of", conclusion_premises_to_claims, "of Premises to Claims" )
-    print("On average, essays we have seen have a ratio of",average_conclusion_major_claims_to_claims,"of Claims to Major Claims and a ratio of", average_conclusion_premises_to_claims, "of Premises to Claims")
+    feedback.append("The conclusion has " + str(essay_conclusion_component_tuple[1]) + " Major Claims, " + str(essay_conclusion_component_tuple[2]) +  " Claims and " +  str(essay_conclusion_component_tuple[3]) + " Premises")
+    feedback.append("The conclusion has a ratio of " + str(conclusion_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(conclusion_premises_to_claims) + " of Premises to Claims" )
+    feedback.append("On average, essays we have seen have a ratio of " + str(average_conclusion_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " +  str(average_conclusion_premises_to_claims) + " of Premises to Claims")
     
     if(conclusion_major_claims_to_claims - average_conclusion_major_claims_to_claims > -1 and conclusion_major_claims_to_claims - average_conclusion_major_claims_to_claims < 2):
-        print("Your Claims to Major Claims ratio is good - generally we want less Claims and more Major Claims in a conclusion, although having a single Claim in your conclusion or summarising your Claims is also a good idea.")
+        feedback.append("Your Claims to Major Claims ratio is good - generally we want less Claims and more Major Claims in a conclusion, although having a single Claim in your conclusion or summarising your Claims is also a good idea.")
     elif(conclusion_major_claims_to_claims - average_conclusion_major_claims_to_claims > 2):
-        print("Your Claims to Major Claims ratio is not good - having too many Claims in your conclusion impacts the readability of your final thesis statement.")
+        feedback.append("Your Claims to Major Claims ratio is not good - having too many Claims in your conclusion impacts the readability of your final thesis statement.")
         
     if(conclusion_premises_to_claims - average_conclusion_premises_to_claims < 1):
-        print("Your Premises to Claims ratio is good - this means that you are keeping your conclusion focussed on your thesis statement.")
+        feedback.append("Your Premises to Claims ratio is good - this means that you are keeping your conclusion focussed on your thesis statement.")
     elif(conclusion_premises_to_claims - average_conclusion_premises_to_claims > 1):
-        print("Your Premises to Claims ratio is not good - aim to have 1 or 0 premises in your conclusion. The conclusion should be primarily used to sum up your overall thesis of the essay.")
+        feedback.append("Your Premises to Claims ratio is not good - aim to have 1 or 0 premises in your conclusion. The conclusion should be primarily used to sum up your overall thesis of the essay.")
     
+    return feedback
     
 def paragraph_component_sequence(essay):
     #Pass in an essay. Take each paragraph. Store the order of components in a series - MC = 1, C = 2 and P = 3. So in a paragraph with Claim, Premise Premise, it would go (1,2,2)
@@ -342,41 +347,44 @@ def paragraph_flow_feedback(essay):
     introduction = essay_paragraphs_flow.pop(0)
     conclusion = essay_paragraphs_flow.pop(len(essay_paragraphs_flow) -1)
     
-    print("The flow of Argument Components in your Introduction goes:", introduction, "where 'None' labels a non-argumentative sentence.")
+    feedback = []
+    feedback.append("The flow of Argument Components in your Introduction goes: " + str(introduction) +  " where 'None' labels a non-argumentative sentence.")
     #In an introduction, we want the Major Claims to either be in the first or last sentence.
     if introduction[1] == "MajorClaim":
-        print("Your introduction starts with a Major Claim. This is great, it means you are immediately informing your reader of your main focus for the essay.")
+        feedback.append("Your introduction starts with a Major Claim. This is great, it means you are immediately informing your reader of your main focus for the essay.")
     elif introduction[len(introduction) -1] == "Major Claim":
-        print("Your introduction ends with a Major Claim. This is great, as you mention your thesis statement right before getting into your arguments.")
+        feedback.append("Your introduction ends with a Major Claim. This is great, as you mention your thesis statement right before getting into your arguments.")
     
     for index in range(len(introduction) -1):
         if index != 1 or index!= len(introduction)-1:
             if introduction[index] == "MajorClaim":
-                print("Your introduction contains a Major Claim, however it is not in a great position. Try to keep your Major Claims to the first or last sentence for better readability.")
+                feedback.append("Your introduction contains a Major Claim, however it is not in a great position. Try to keep your Major Claims to the first or last sentence for better readability.")
     
     for index in range(len(essay_paragraphs_flow)):
         paragraph = essay_paragraphs_flow[index]
-        print("The flow of Argument Components in Paragraph", paragraph[0], "goes:", paragraph, "where 'None' labels a non-argumentative sentence.")
+        feedback.append("The flow of Argument Components in Paragraph" + str(paragraph[0]) + " goes: " + str(paragraph) + " where 'None' labels a non-argumentative sentence.")
         if paragraph[1] == "Claim":
-            print("Paragraph", paragraph[0], "starts with a Claim. This is good, you immediately bring this sub-arguments main point forward.")
+            feedback.append("Paragraph "+ str(paragraph[0]) + " starts with a Claim. This is good, you immediately bring this sub-arguments main point forward.")
         elif paragraph[len(paragraph) -1] == "Claim":
-            print("Paragraph", paragraph[0], "ends with a Claim. This is good, you are ending the paragraph with the point of your previous statements.")
+            feedback.append("Paragraph "+ str(paragraph[0]) + " ends with a Claim. This is good, you are ending the paragraph with the point of your previous statements.")
         for index_two in range(len(paragraph) -1):
             if index_two != 1 and index_two != len(paragraph)-1:
                 if paragraph[index] == "Claim":
-                    print("This paragraph contains a Claim that is neither at the start or the end of the paragraph. This makes it harder for the reader to determine the actual point of this argument")
+                    feedback.append("This paragraph contains a Claim that is neither at the start or the end of the paragraph. This makes it harder for the reader to determine the actual point of this argument")
     
     
-    print("The flow of Argument Components in your Conclusion goes:", conclusion, "where 'None' labels a non-argumentative sentence.")
+    feedback.append("The flow of Argument Components in your Conclusion goes:"+ str(conclusion) + " where 'None' labels a non-argumentative sentence.")
     if conclusion[1] == "MajorClaim":
-        print("Your conclusion starts with a Major Claim. This is great, it means you are immediately describing the thesis of your essay.")
+        feedback.append("Your conclusion starts with a Major Claim. This is great, it means you are immediately describing the thesis of your essay.")
     elif conclusion[len(conclusion) -1] == "Major Claim":
-        print("Your conclusion ends with a Major Claim. This is great, it means your thesis statement is left in the reader's mind and is always a great way to close an essay.")
+        feedback.append("Your conclusion ends with a Major Claim. This is great, it means your thesis statement is left in the reader's mind and is always a great way to close an essay.")
     for index in range(len(conclusion) -1):
         if index != 1 and index != len(conclusion)-1:
             if conclusion[index] == "MajorClaim":
-                print("Your conclusion contains a Major Claim, however it is not in a great position. Try to keep your Major Claims to the first or last sentence for better readability.")
+                feedback.append("Your conclusion contains a Major Claim, however it is not in a great position. Try to keep your Major Claims to the first or last sentence for better readability.")
     
+    return feedback
+
 def argumentative_to_none_argumentative_ratios(essay):
     total_paragraphs = essay["Total Paragraphs"].values[0]
     argumentative_to_non_argumentative_ratios = []
@@ -398,35 +406,40 @@ def argumentative_to_none_argumentative_ratios(essay):
 def argumentative_to_none_argumentative_feedback(essay):
     ratio_list = argumentative_to_none_argumentative_ratios(essay)
     
+    feedback = []
     for index in range(len(ratio_list)):
         if index == 0: #if introduction
-            print("Your introduction has a ratio of", ratio_list[index], "of Argumentative to Non-Argumentative Sentences.")
+            feedback.append("Your introduction has a ratio of " +  str(ratio_list[index]) + " of Argumentative to Non-Argumentative Sentences.")
             if ratio_list[index] > 0.25:
-                print("This is decent - you are not diluting your introduction with sentences that do not really contribute to the overall message.")
+                feedback.append("This is decent - you are not diluting your introduction with sentences that do not really contribute to the overall message.")
             else:
-                print("This is poor - in the introduction try to stay brief and on point so you can get to your main points sooner.")
+                feedback.append("This is poor - in the introduction try to stay brief and on point so you can get to your main points sooner.")
         elif index == len(ratio_list)-1: #if conclusion
-            print("Your conclusion has a ratio of", ratio_list[index], "of Argumentative to Non-Argumentative Sentences.")
+            feedback.append("Your conclusion has a ratio of" +  str(ratio_list[index])  + " of Argumentative to Non-Argumentative Sentences.")
             if ratio_list[index] > 0.25:
-                print("This is decent - you are not diluting your conclusion with sentences that do not really contribute to the overall message.")
+                feedback.append("This is decent - you are not diluting your conclusion with sentences that do not really contribute to the overall message.")
             else:
-                print("This is poor - in the conclusion aim to summarise your overall thesis and not dilute the message.")
+                feedback.append("This is poor - in the conclusion aim to summarise your overall thesis and not dilute the message.")
         else: #any other paragraph
-            print("Paragraph",index+1,"has a ratio of", ratio_list[index], "of Argumentative to Non-Argumentative Sentences.")
+            feedback.append("Paragraph " + str(index+1) + " has a ratio of"+ str(ratio_list[index]) + " of Argumentative to Non-Argumentative Sentences.")
             if ratio_list[index] > 1:
-                print("This is good, in main body paragraphs we need to be introducing the bulk of our justifications so non-argumentative sentences may make our arguments less clear.")
+                feedback.append("This is good, in main body paragraphs we need to be introducing the bulk of our justifications so non-argumentative sentences may make our arguments less clear.")
             else:
-                print("This is poor - while main body paragraphs are larger and more diverse, they still need to be focussed on creating sub-arguments to aid the overall thesis statements in the introduciton and conclusion.")
-train = pd.read_pickle("./train.pkl")
-test = pd.read_pickle("./test.pkl")
+                feedback.append("This is poor - while main body paragraphs are larger and more diverse, they still need to be focussed on creating sub-arguments to aid the overall thesis statements in the introduciton and conclusion.")
 
-test_essay_id = 4
-test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
+    return feedback
 
-#component_count_feedback(train, test_essay)
-#paragraph_component_count_feedback(train, test_essay)
-#paragraph_flow_feedback(test_essay)
-argumentative_to_none_argumentative_feedback(test_essay)
+def main():
+    train = pd.read_pickle("./train.pkl")
+    test = pd.read_pickle("./test.pkl")
+
+    test_essay_id = 4
+    test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
+
+    #component_count_feedback(train, test_essay)
+    #paragraph_component_count_feedback(train, test_essay)
+    #paragraph_flow_feedback(test_essay)
+    #argumentative_to_none_argumentative_feedback(test_essay)
 
 
 # In[ ]:

@@ -224,111 +224,111 @@ def thesis_indicator_feature(data):
             presence_of_indicators.append(0)
             
     data['Thesis Indicator Present'] = presence_of_indicators
-        
-                
-train = pd.read_pickle("./train.pkl")
-test = pd.read_pickle("./test.pkl")
 
-test_essay_id = 4
-test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
+def main():              
+    train = pd.read_pickle("./train.pkl")
+    test = pd.read_pickle("./test.pkl")
 
-feature_columns=['Lemmatized Sentence','Paragraph Number', 'Sentence Within Introduction', 'Sentence Within Conclusion', 'Number of Proceeding Components', 'Number of Preceding Components' , 'First Person Indicator Present', 'First Person Indicator Count', 'Forward Indicator Present', 'Backward Indicator Present', 'Thesis Indicator Present']
-for curr_tag in list_of_pos_tags:
-    feature_columns.append("Distribution of " + curr_tag + " POS Tag")
+    test_essay_id = 4
+    test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
+
+    feature_columns=['Lemmatized Sentence','Paragraph Number', 'Sentence Within Introduction', 'Sentence Within Conclusion', 'Number of Proceeding Components', 'Number of Preceding Components' , 'First Person Indicator Present', 'First Person Indicator Count', 'Forward Indicator Present', 'Backward Indicator Present', 'Thesis Indicator Present']
+    for curr_tag in list_of_pos_tags:
+        feature_columns.append("Distribution of " + curr_tag + " POS Tag")
 
 #Remove all non-argumentative sentences from the train and test pool. This is to simulate the Identification process identifying the argumentative sentences.
 
-non_argumentative_train = train[ train['Argumentative Label'] == '0'].index
-train.drop(non_argumentative_train, inplace = True)
-train.reset_index(drop=True, inplace=True)
+    non_argumentative_train = train[ train['Argumentative Label'] == '0'].index
+    train.drop(non_argumentative_train, inplace = True)
+    train.reset_index(drop=True, inplace=True)
 
-non_argumentative_test = test[ test['Argumentative Label'] == '0'].index
-test.drop(non_argumentative_test, inplace = True)
-test.reset_index(drop=True, inplace=True)
+    non_argumentative_test = test[ test['Argumentative Label'] == '0'].index
+    test.drop(non_argumentative_test, inplace = True)
+    test.reset_index(drop=True, inplace=True)
 
-tokenisation_features(train)
-part_of_speech_features(train)
-positional_features(train)
-first_person_indicators_features(train)
-forward_indicator_feature(train)
-backward_indicator_feature(train)
-thesis_indicator_feature(train)
+    tokenisation_features(train)
+    part_of_speech_features(train)
+    positional_features(train)
+    first_person_indicators_features(train)
+    forward_indicator_feature(train)
+    backward_indicator_feature(train)
+    thesis_indicator_feature(train)
 
-tokenisation_features(test)
-part_of_speech_features(test)
-positional_features(test)
-first_person_indicators_features(test)
-forward_indicator_feature(test)
-backward_indicator_feature(test)
-thesis_indicator_feature(test)
+    tokenisation_features(test)
+    part_of_speech_features(test)
+    positional_features(test)
+    first_person_indicators_features(test)
+    forward_indicator_feature(test)
+    backward_indicator_feature(test)
+    thesis_indicator_feature(test)
 
-tokenisation_features(test_essay)
-part_of_speech_features(test_essay)
-positional_features(test_essay)
-first_person_indicators_features(test_essay)
-forward_indicator_feature(test_essay)
-backward_indicator_feature(test_essay)
-thesis_indicator_feature(test_essay)
-print(test_essay)
+    tokenisation_features(test_essay)
+    part_of_speech_features(test_essay)
+    positional_features(test_essay)
+    first_person_indicators_features(test_essay)
+    forward_indicator_feature(test_essay)
+    backward_indicator_feature(test_essay)
+    thesis_indicator_feature(test_essay)
+    print(test_essay)
 
 
 
 #Y should be the argument component type label encoded - labels being MajorClaim, Claim and Premise
-component_type = preprocessing.LabelEncoder()
+    component_type = preprocessing.LabelEncoder()
 #for some reason, MajorClaim = 1 while Claim = 0. Unsure why this is but keep in mind for testing label encoding
-component_type.fit(['MajorClaim','Claim', 'Premise'])
+    component_type.fit(['MajorClaim','Claim', 'Premise'])
 
-x = train.loc[:, feature_columns]
-print(x)
-y = train.loc[:, ['Argument Component Type']]
-y_encoded = component_type.transform(y)
-y['Argument Component Type'] = y_encoded
+    x = train.loc[:, feature_columns]
+    print(x)
+    y = train.loc[:, ['Argument Component Type']]
+    y_encoded = component_type.transform(y)
+    y['Argument Component Type'] = y_encoded
 
-x_new = test.loc[:, feature_columns]
-print(x_new)
-y_new = test.loc[:, ['Argument Component Type']]
-print(y_new)
-y_new_encoded = component_type.transform(y_new)
-print(y_new_encoded)
-y_new['Argument Component Type'] = y_new_encoded
+    x_new = test.loc[:, feature_columns]
+    print(x_new)
+    y_new = test.loc[:, ['Argument Component Type']]
+    print(y_new)
+    y_new_encoded = component_type.transform(y_new)
+    print(y_new_encoded)
+    y_new['Argument Component Type'] = y_new_encoded
 
-tf = TfidfVectorizer(max_features = 800,strip_accents = 'ascii',stop_words = 'english',)
+    tf = TfidfVectorizer(max_features = 800,strip_accents = 'ascii',stop_words = 'english',)
 
-x_sentences = x['Lemmatized Sentence']
+    x_sentences = x['Lemmatized Sentence']
 
-x_sentences_vectorized = tf.fit_transform(x_sentences)
-x_vectorized_dataframe = pd.DataFrame(x_sentences_vectorized.todense(), columns=tf.get_feature_names())
-x_concat = pd.concat([x, x_vectorized_dataframe], axis=1)
-x_final = x_concat.drop(['Lemmatized Sentence'], axis=1)
+    x_sentences_vectorized = tf.fit_transform(x_sentences)
+    x_vectorized_dataframe = pd.DataFrame(x_sentences_vectorized.todense(), columns=tf.get_feature_names())
+    x_concat = pd.concat([x, x_vectorized_dataframe], axis=1)
+    x_final = x_concat.drop(['Lemmatized Sentence'], axis=1)
 
-x_new_sentences = x_new['Lemmatized Sentence']
+    x_new_sentences = x_new['Lemmatized Sentence']
 
-x_new_sentences_vectorized = tf.transform(x_new_sentences)
-x_new_vectorized_dataframe = pd.DataFrame(x_new_sentences_vectorized.todense(), columns=tf.get_feature_names())
-x_new_concat = pd.concat([x_new, x_new_vectorized_dataframe], axis=1)
-x_new_final = x_new_concat.drop(['Lemmatized Sentence'], axis=1)
+    x_new_sentences_vectorized = tf.transform(x_new_sentences)
+    x_new_vectorized_dataframe = pd.DataFrame(x_new_sentences_vectorized.todense(), columns=tf.get_feature_names())
+    x_new_concat = pd.concat([x_new, x_new_vectorized_dataframe], axis=1)
+    x_new_final = x_new_concat.drop(['Lemmatized Sentence'], axis=1)
 
-naive_bayes = MultinomialNB()
-naive_bayes.fit(x_final,y.values.ravel())
+    naive_bayes = MultinomialNB()
+    naive_bayes.fit(x_final,y.values.ravel())
 
-predictions = naive_bayes.predict(x_new_final)
+    predictions = naive_bayes.predict(x_new_final)
 
-baseline = predictions
-baseline = np.where(baseline < 2, 2, baseline)
+    baseline = predictions
+    baseline = np.where(baseline < 2, 2, baseline)
 
-c_m = confusion_matrix(y_new.values.ravel(), predictions)
-c_m_true = confusion_matrix(y_new.values.ravel(), y_new.values.ravel())
-print('Predicted Values: ', predictions)
-print('Accuracy score: ', accuracy_score(y_new.values.ravel(), predictions))
-print('Precision score: ', precision_score(y_new.values.ravel(), predictions, average='weighted'))
-print('Recall score: ', recall_score(y_new.values.ravel(), predictions, average='weighted'))
-print('Baseline Accuracy score: ', accuracy_score(y_new.values.ravel(), baseline))
-print('Baseline Precision score: ', precision_score(y_new.values.ravel(), baseline, average='weighted'))
-print('Baseline Recall score: ', recall_score(y_new.values.ravel(), baseline, average='weighted'))
-print('Confusion Matrix:')
-print(c_m)
-print('Actual Result Matrix:')
-print(c_m_true)
+    c_m = confusion_matrix(y_new.values.ravel(), predictions)
+    c_m_true = confusion_matrix(y_new.values.ravel(), y_new.values.ravel())
+    print('Predicted Values: ', predictions)
+    print('Accuracy score: ', accuracy_score(y_new.values.ravel(), predictions))
+    print('Precision score: ', precision_score(y_new.values.ravel(), predictions, average='weighted'))
+    print('Recall score: ', recall_score(y_new.values.ravel(), predictions, average='weighted'))
+    print('Baseline Accuracy score: ', accuracy_score(y_new.values.ravel(), baseline))
+    print('Baseline Precision score: ', precision_score(y_new.values.ravel(), baseline, average='weighted'))
+    print('Baseline Recall score: ', recall_score(y_new.values.ravel(), baseline, average='weighted'))
+    print('Confusion Matrix:')
+    print(c_m)
+    print('Actual Result Matrix:')
+    print(c_m_true)
 
 
 # In[ ]:

@@ -105,79 +105,80 @@ def similarity_features(data):
         similarities.append(new_prompt.similarity(new_sentence))
     dataframe['Sentence Similarity To Prompt'] = similarities
 
-train = pd.read_pickle("./train.pkl")
-test = pd.read_pickle("./test.pkl")
+def main():
+    train = pd.read_pickle("./train.pkl")
+    test = pd.read_pickle("./test.pkl")
 
-test_essay_id = 4
-test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
+    test_essay_id = 4
+    test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
 
-position_features(train)
-token_features(train)
-similarity_features(train)
+    position_features(train)
+    token_features(train)
+    similarity_features(train)
 
-position_features(test)
-token_features(test)
-similarity_features(test)
+    position_features(test)
+    token_features(test)
+    similarity_features(test)
 
-feature_columns=['Paragraph Number', 'Sentence', 'Sentence Similarity To Prompt', 'Most Common POS Token']
+    feature_columns=['Paragraph Number', 'Sentence', 'Sentence Similarity To Prompt', 'Most Common POS Token']
 
-tf = TfidfVectorizer(max_features = 800,strip_accents = 'ascii',stop_words = 'english',)
-le = preprocessing.LabelEncoder()
-pos_encoder = preprocessing.LabelEncoder()
-pos_encoder.fit(pos_tags)
+    tf = TfidfVectorizer(max_features = 800,strip_accents = 'ascii',stop_words = 'english',)
+    le = preprocessing.LabelEncoder()
+    pos_encoder = preprocessing.LabelEncoder()
+    pos_encoder.fit(pos_tags)
 
-x = train.loc[:, feature_columns]
-y = train.loc[:, ['Argumentative Label']]
-x_sentences = x['Sentence']
+    x = train.loc[:, feature_columns]
+    y = train.loc[:, ['Argumentative Label']]
+    x_sentences = x['Sentence']
 
-x_sentences_vectorized = tf.fit_transform(x_sentences)
-x_vectorized_dataframe = pd.DataFrame(x_sentences_vectorized.todense(), columns=tf.get_feature_names())
-x_concat = pd.concat([x, x_vectorized_dataframe], axis=1)
-x_final = x_concat.drop(['Sentence'], axis=1)
+    x_sentences_vectorized = tf.fit_transform(x_sentences)
+    x_vectorized_dataframe = pd.DataFrame(x_sentences_vectorized.todense(), columns=tf.get_feature_names())
+    x_concat = pd.concat([x, x_vectorized_dataframe], axis=1)
+    x_final = x_concat.drop(['Sentence'], axis=1)
 
-x_pos_encoded = pos_encoder.transform(x['Most Common POS Token'])
-x_final['Most Common POS Token'] = x_pos_encoded
+    x_pos_encoded = pos_encoder.transform(x['Most Common POS Token'])
+    x_final['Most Common POS Token'] = x_pos_encoded
 
-y_binarized = le.fit_transform(y)
-y['Argumentative Label'] = y_binarized
+    y_binarized = le.fit_transform(y)
+    y['Argumentative Label'] = y_binarized
 
-x_new = test.loc[:, feature_columns]
-y_new = test.loc[:, ['Argumentative Label']]
-x_new_sentences = x_new['Sentence']
+    x_new = test.loc[:, feature_columns]
+    y_new = test.loc[:, ['Argumentative Label']]
+    x_new_sentences = x_new['Sentence']
 
-x_new_sentences_vectorized = tf.transform(x_new_sentences)
-x_new_vectorized_dataframe = pd.DataFrame(x_new_sentences_vectorized.todense(), columns=tf.get_feature_names())
-x_new_concat = pd.concat([x_new, x_new_vectorized_dataframe], axis=1)
-x_new_final = x_new_concat.drop(['Sentence'], axis=1)
+    x_new_sentences_vectorized = tf.transform(x_new_sentences)
+    x_new_vectorized_dataframe = pd.DataFrame(x_new_sentences_vectorized.todense(), columns=tf.get_feature_names())
+    x_new_concat = pd.concat([x_new, x_new_vectorized_dataframe], axis=1)
+    x_new_final = x_new_concat.drop(['Sentence'], axis=1)
 
-x_new_pos_encoded = pos_encoder.transform(x_new['Most Common POS Token'])
-x_new_final['Most Common POS Token'] = x_new_pos_encoded
+    x_new_pos_encoded = pos_encoder.transform(x_new['Most Common POS Token'])
+    x_new_final['Most Common POS Token'] = x_new_pos_encoded
 
-y_new_binarized = le.transform(y_new)
-y_new['Argumentative Label'] = y_new_binarized
+    y_new_binarized = le.transform(y_new)
+    y_new['Argumentative Label'] = y_new_binarized
 
-naive_bayes = MultinomialNB()
-naive_bayes.fit(x_final,y.values.ravel())
+    naive_bayes = MultinomialNB()
+    naive_bayes.fit(x_final,y.values.ravel())
 
-predictions = naive_bayes.predict(x_new_final)
+    predictions = naive_bayes.predict(x_new_final)
 
-test['Predicted Argumentative Label'] = predictions
-test.to_pickle("essay_components_identified.pkl")
+    test['Predicted Argumentative Label'] = predictions
+    test.to_pickle("essay_components_identified.pkl")
 
-baseline = predictions
-baseline = np.where(baseline < 1, 1, baseline)
+    baseline = predictions
+    baseline = np.where(baseline < 1, 1, baseline)
 
-c_m = confusion_matrix(y_new.values.ravel(), predictions)
+    c_m = confusion_matrix(y_new.values.ravel(), predictions)
 
-print('Predicted Values: ', predictions)
-print('Accuracy score: ', accuracy_score(y_new.values.ravel(), predictions))
-print('Precision score: ', precision_score(y_new.values.ravel(), predictions, average='weighted'))
-print('Recall score: ', recall_score(y_new.values.ravel(), predictions, average='weighted'))
-print('Baseline Accuracy score: ', accuracy_score(y_new.values.ravel(), baseline))
-print('Baseline Precision score: ', precision_score(y_new.values.ravel(), baseline, average='weighted'))
-print('Baseline Recall score: ', recall_score(y_new.values.ravel(), baseline, average='weighted'))
-print('Confusion Matrix:')
-print(c_m)
+    print('Predicted Values: ', predictions)
+    print('Accuracy score: ', accuracy_score(y_new.values.ravel(), predictions))
+    print('Precision score: ', precision_score(y_new.values.ravel(), predictions, average='weighted'))
+    print('Recall score: ', recall_score(y_new.values.ravel(), predictions, average='weighted'))
+    print('Baseline Accuracy score: ', accuracy_score(y_new.values.ravel(), baseline))
+    print('Baseline Precision score: ', precision_score(y_new.values.ravel(), baseline, average='weighted'))
+    print('Baseline Recall score: ', recall_score(y_new.values.ravel(), baseline, average='weighted'))
+    print('Confusion Matrix:')
+    print(c_m)
 
 
 # In[ ]:
