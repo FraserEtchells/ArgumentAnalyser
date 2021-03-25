@@ -143,6 +143,7 @@ def average_introduction_component_count(data):
     average_claims = claims / len(introduction_component_counts)
     average_premises = premises / len(introduction_component_counts)
     
+
     return average_major_claims, average_claims, average_premises
     
 def average_conclusion_component_count(data):
@@ -206,8 +207,8 @@ def average_paragraph_component_count(data):
     return average_major_claims, average_claims, average_premises
     
 #gives feedback based on how the passed essay compares to the corpus' average results. Do this in the form of ratios to ensure longer essays will be marked appropriately.
-def component_count_feedback(data, essay):
-    average_component_count_tuple = average_component_count(data)
+def component_count_feedback(essay):
+    average_component_count_tuple = (1.59, 3.30, 8.57)
     essay_component_count_tuple = component_count_total(essay)
     
     essay_ratio_tuple = get_component_ratios(essay_component_count_tuple, False)
@@ -238,10 +239,11 @@ def component_count_feedback(data, essay):
     return feedback
 
 
-def paragraph_component_count_feedback(data, essay):
-    average_introduction_component_tuple = average_introduction_component_count(data)
-    average_conclusion_component_tuple = average_conclusion_component_count(data)
-    average_paragraph_component_tuple = average_paragraph_component_count(data)
+def paragraph_component_count_feedback(essay):
+    #originally, we used functions to derive these results (which are the same as the dataset is static) which vastly increases run times.
+    average_introduction_component_tuple = (0.75, 0.22, 0.03)
+    average_conclusion_component_tuple = (0.82, 0.61, 0.18)
+    average_paragraph_component_tuple = (0.004, 0.96, 3.27)
     
     essay_paragraph_tuple_list = component_count_paragraphs(essay)
     essay_paragraph_tuple_list.pop(0) # remove prompt paragraph
@@ -270,8 +272,8 @@ def paragraph_component_count_feedback(data, essay):
     average_paragraph_premises_to_claims = average_paragraph_ratio_tuple[1]
     
     feedback = []
-    feedback.append("The introduction has " + str(essay_introduction_component_tuple[1]) + " Major Claims, " +  str(essay_introduction_component_tuple[2]) + " Claims and "+ str(essay_introduction_component_tuple[3]) + "Premises")
-    feedback.append("The introduction has a ratio of "+ str(introduction_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str (introduction_premises_to_claims) + " of Premises to Claims" )
+    feedback.append("The introduction has " + str(essay_introduction_component_tuple[1]) + " Major Claims, " +  str(essay_introduction_component_tuple[2]) + " Claims and " + str(essay_introduction_component_tuple[3]) + "Premises")
+    feedback.append("The introduction has a ratio of " + str(introduction_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(introduction_premises_to_claims) + " of Premises to Claims" )
     feedback.append("On average, essays we have seen have a ratio of " + str(average_introduction_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(average_introduction_premises_to_claims) + " of Premises to Claims")
     
     if(introduction_major_claims_to_claims - average_introduction_major_claims_to_claims > -1 and introduction_major_claims_to_claims - average_introduction_major_claims_to_claims < 1.1):
@@ -304,9 +306,9 @@ def paragraph_component_count_feedback(data, essay):
         elif(paragraph_premises_to_claims - average_paragraph_premises_to_claims > 2):
             feedback.append("Your Premises to Claims ratio is higher than average - if you have a limited word count you may be better removing some of your premises in this paragraph and either create a new paragraph to support the overall thesis, or add more Premises to another paragraph.")
         
-    feedback.append("The conclusion has " + str(essay_conclusion_component_tuple[1]) + " Major Claims, " + str(essay_conclusion_component_tuple[2]) +  " Claims and " +  str(essay_conclusion_component_tuple[3]) + " Premises")
+    feedback.append("The conclusion has " + str(essay_conclusion_component_tuple[1]) + " Major Claims, " + str(essay_conclusion_component_tuple[2]) +  " Claims and " + str(essay_conclusion_component_tuple[3]) + " Premises")
     feedback.append("The conclusion has a ratio of " + str(conclusion_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(conclusion_premises_to_claims) + " of Premises to Claims" )
-    feedback.append("On average, essays we have seen have a ratio of " + str(average_conclusion_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " +  str(average_conclusion_premises_to_claims) + " of Premises to Claims")
+    feedback.append("On average, essays we have seen have a ratio of " + str(average_conclusion_major_claims_to_claims) + " of Claims to Major Claims and a ratio of " + str(average_conclusion_premises_to_claims) + " of Premises to Claims")
     
     if(conclusion_major_claims_to_claims - average_conclusion_major_claims_to_claims > -1 and conclusion_major_claims_to_claims - average_conclusion_major_claims_to_claims < 2):
         feedback.append("Your Claims to Major Claims ratio is good - generally we want less Claims and more Major Claims in a conclusion, although having a single Claim in your conclusion or summarising your Claims is also a good idea.")
