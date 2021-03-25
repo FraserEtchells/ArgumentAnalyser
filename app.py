@@ -4,11 +4,15 @@ from Component_Identification_Features import *
 from Feedback_System import *
 import os
 import pandas as pd
+import nltk
+
+
 
 app = Flask(__name__)
 dir = os.path.dirname(__file__)
 pickled_scripts_folder = os.path.join(dir, 'PickledScripts')
 list_of_pos_tags = [',','.',':','``',"''",'CC','CD','DT','EX','FW','IN','JJ','JJR','JJS','LS','MD','NN','NNS','NNP','NNPS','PDT','POS','PRP','PRP$','RB','RBR','RBS','RP','SYM','TO','UH','VB','VBD','VBG','VBN','VBP','VBZ','WDT','WP','WP$','WRB']
+nltk.download('punkt')
 
 @app.route("/")
 def form():
