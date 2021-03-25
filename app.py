@@ -35,7 +35,7 @@ def form_process():
 
     feedback = component_count_feedback(data, essay_dataframe)
     print("through component_count")
-    feedback.extend(paragraph_component_count_feedback(data, essay_dataframe))
+    #feedback.extend(paragraph_component_count_feedback(data, essay_dataframe))
     print("through paragraph count")
     feedback.extend(paragraph_flow_feedback(essay_dataframe))
     print("through paragraph flow")
