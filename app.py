@@ -72,6 +72,7 @@ def component_identification(essay):
 
     predictions = model.predict(essay_final)
     essay["Argumentative Label"] = predictions
+    print("finished component identification")
 
 
 def component_classification(essay):
@@ -116,7 +117,7 @@ def component_classification(essay):
     for index in non_argumentative_sentences:
         predictions_list.insert(index, "None")
     essay["Argument Component Type"] = predictions_list
-    
+    print("finished component classification")
 
 def data_preprocess(essay_text):
     end_dataframe = pd.DataFrame(columns = ['Essay ID','Sentence', 'Source Paragraph', 'Paragraph Number'])
@@ -132,9 +133,6 @@ def data_preprocess(essay_text):
         else:
             paragraphs.append(splits)
     for paragraph in paragraphs:
-        print(len(paragraph))
-
-    print(paragraphs)
                 
     number_of_paragraphs = len(paragraphs)
         #Splits paragraphs into sentences. We do this rather than splitting the raw data into sentences as some essay prompts are not recognised by the system as sentences, so the prompt is often appended to the first sentence
@@ -164,6 +162,7 @@ def data_preprocess(essay_text):
     data = pd.DataFrame(columns = ['Essay ID','Sentence', 'Source Paragraph', 'Paragraph Number', 'Total Paragraphs'])
     for i in range(len(sentences)):
         data = data.append({'Essay ID': curr_essay_id, 'Sentence':sentences[i],'Source Paragraph':source_paragraph[i], 'Paragraph Number':paragraph_numbers[i], 'Total Paragraphs':number_of_paragraphs}, ignore_index=True)
+    print("finished preprocess")
     return data
     
 
