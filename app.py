@@ -132,7 +132,6 @@ def data_preprocess(essay_text):
             continue
         else:
             paragraphs.append(splits)
-    for paragraph in paragraphs:
                 
     number_of_paragraphs = len(paragraphs)
         #Splits paragraphs into sentences. We do this rather than splitting the raw data into sentences as some essay prompts are not recognised by the system as sentences, so the prompt is often appended to the first sentence
