@@ -31,17 +31,13 @@ def form_process():
     data_file =  open(os.path.join(pickled_scripts_folder,'train.pkl'), "rb") 
     data = pickle.load(data_file)
     data_file.close()
-    print("opened data file")
 
-    feedback = component_count_feedback(essay_dataframe)
-    print("through component_count")
-    feedback.extend(paragraph_component_count_feedback(essay_dataframe))
-    print("through paragraph count")
-    feedback.extend(paragraph_flow_feedback(essay_dataframe))
-    print("through paragraph flow")
-    feedback.extend(argumentative_to_none_argumentative_feedback(essay_dataframe))
-    print(feedback)
-    return(text)
+    component_count_feedback_list = component_count_feedback(essay_dataframe)
+    paragraph_count_feedback_list = paragraph_component_count_feedback(essay_dataframe)
+    paragraph_flow_feedback_list = paragraph_flow_feedback(essay_dataframe)
+    argumentative_sentence_feedback_list = argumentative_to_none_argumentative_feedback(essay_dataframe)
+    
+    return render_template('essay_feedback.html', overall=component_count_feedback_list, paragraph_components = paragraph_count_feedback_list, paragraph_flows = paragraph_flow_feedback_list, argumentative = argumentative_sentence_feedback_list)
 
 def component_identification(essay):
     copy_of_essay = essay.copy()
@@ -76,7 +72,6 @@ def component_identification(essay):
 
     predictions = model.predict(essay_final)
     essay["Argumentative Label"] = predictions
-    print("finished component identification")
 
 
 def component_classification(essay):
@@ -120,8 +115,16 @@ def component_classification(essay):
     predictions_list = predictions.tolist()
     for index in non_argumentative_sentences:
         predictions_list.insert(index, "None")
+
+    for index, component in enumerate(predictions_list):
+        if component == 0:
+            predictions_list[index] = "MajorClaim"
+        elif component == 1:
+            predictions_list[index] = "Claim"
+        elif component == 2:
+            predictions_list[index] = "Premise"
+
     essay["Argument Component Type"] = predictions_list
-    print("finished component classification")
 
 def data_preprocess(essay_text):
     end_dataframe = pd.DataFrame(columns = ['Essay ID','Sentence', 'Source Paragraph', 'Paragraph Number'])
@@ -165,7 +168,6 @@ def data_preprocess(essay_text):
     data = pd.DataFrame(columns = ['Essay ID','Sentence', 'Source Paragraph', 'Paragraph Number', 'Total Paragraphs'])
     for i in range(len(sentences)):
         data = data.append({'Essay ID': curr_essay_id, 'Sentence':sentences[i],'Source Paragraph':source_paragraph[i], 'Paragraph Number':paragraph_numbers[i], 'Total Paragraphs':number_of_paragraphs}, ignore_index=True)
-    print("finished preprocess")
     return data
     
 

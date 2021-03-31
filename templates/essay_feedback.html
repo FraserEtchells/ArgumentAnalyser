@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <h1> Overall Feedback </h1>
+    {% for i in overall %}
+        <h2>{{ i }}</h2>
+    {% endfor %}
+
+    <h1>Paragraph Based Feedback</h1>
+    {% for i in paragraph_components %}
+        <h2>{{ i }}</h2>
+    {% endfor %}
+
+    <h1>Paragraph Flow Feedback</h1>
+    {% for i in paragraph_flows %}
+        <h2>{{ i }}</h2>
+    {% endfor %}
+
+    <h1>Argumentative Content Feedback</h1>
+    {% for i in argumentative %}
+        <h2>{{ i }}</h2>
+    {% endfor %}
+</html>
