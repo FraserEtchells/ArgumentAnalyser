@@ -117,9 +117,9 @@ def component_classification(essay):
         predictions_list.insert(index, "None")
 
     for index, component in enumerate(predictions_list):
-        if component == 0:
+        if component == 1:
             predictions_list[index] = "MajorClaim"
-        elif component == 1:
+        elif component == 0:
             predictions_list[index] = "Claim"
         elif component == 2:
             predictions_list[index] = "Premise"

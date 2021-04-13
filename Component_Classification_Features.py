@@ -284,7 +284,6 @@ def main():
     forward_indicator_feature(test_essay)
     backward_indicator_feature(test_essay)
     thesis_indicator_feature(test_essay)
-    print(test_essay)
 
 
 
@@ -294,17 +293,15 @@ def main():
     component_type.fit(['MajorClaim','Claim', 'Premise'])
 
     x = train.loc[:, feature_columns]
-    print(x)
     y = train.loc[:, ['Argument Component Type']]
+    print(y)
     y_encoded = component_type.transform(y)
+    print(y_encoded)
     y['Argument Component Type'] = y_encoded
 
     x_new = test.loc[:, feature_columns]
-    print(x_new)
     y_new = test.loc[:, ['Argument Component Type']]
-    print(y_new)
     y_new_encoded = component_type.transform(y_new)
-    print(y_new_encoded)
     y_new['Argument Component Type'] = y_new_encoded
 
     tf = TfidfVectorizer(max_features = 800,strip_accents = 'ascii',stop_words = 'english',)
@@ -348,6 +345,8 @@ def main():
     print(c_m)
     print('Actual Result Matrix:')
     print(c_m_true)
+
+main()
 # In[ ]:
 
 
