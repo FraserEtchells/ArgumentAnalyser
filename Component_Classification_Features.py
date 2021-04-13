@@ -345,8 +345,6 @@ def main():
     print(c_m)
     print('Actual Result Matrix:')
     print(c_m_true)
-
-main()
 # In[ ]:
 
 
