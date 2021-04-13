@@ -227,7 +227,7 @@ def thesis_indicator_feature(data):
                 else :
                     phrase = sentence_tokens[j]
 
-                if (fuzz.token_sort_ratio(thesis_indicators[i], phrase) > 75):
+                if (fuzz.token_sort_ratio(thesis_indicators[i], phrase) > 72):
                     indicator_present = True
                     break
             if (indicator_present == True):
@@ -328,6 +328,10 @@ def main():
 
     predictions = naive_bayes.predict(x_new_final)
 
+    pickle.dump(tf, open("tfidf_lemmatized.pickle", "wb"))
+    pickle.dump(component_type, open("component_type_encoder.pickle", "wb"))
+    pickle.dump(naive_bayes, open("component_classification_model.pickle", "wb"))
+
     baseline = predictions
     baseline = np.where(baseline < 2, 2, baseline)
 
@@ -344,9 +348,6 @@ def main():
     print(c_m)
     print('Actual Result Matrix:')
     print(c_m_true)
-
-main()
-
 # In[ ]:
 
 

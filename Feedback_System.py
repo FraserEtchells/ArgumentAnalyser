@@ -505,8 +505,6 @@ def main():
     print(paragraph_flow_feedback(test_essay))
     print(argumentative_to_none_argumentative_feedback(test_essay))
 
-main()
-
 
 # In[ ]:
 

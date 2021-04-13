@@ -165,6 +165,11 @@ def main():
     test['Predicted Argumentative Label'] = predictions
     test.to_pickle("essay_components_identified.pkl")
 
+    pickle.dump(tf, open("tfidf.pickle", "wb"))
+    pickle.dump(pos_encoder, open("pos_encoder.pickle", "wb"))
+    pickle.dump(le, open("arg_label_encoder.pickle", "wb"))
+    pickle.dump(naive_bayes, open("component_identification_model.pickle", "wb"))
+
     baseline = predictions
     baseline = np.where(baseline < 1, 1, baseline)
 
