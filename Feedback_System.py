@@ -410,9 +410,10 @@ def paragraph_flow_feedback(essay):
     if not introduction:
         feedback.append("It appears your Introduction consists of one or fewer sentences, therefore we cannot comment on the structure of it.")
     else:
+        paragraph_number = introduction.pop(0)
         feedback.append("The flow of Argument Components in your Introduction goes: " + str(introduction) +  " where 'None' labels a non-argumentative sentence.")
         #In an introduction, we want the Major Claims to either be in the first or last sentence.
-        if introduction[1] == "MajorClaim":
+        if introduction[0] == "MajorClaim":
             feedback.append("Your introduction starts with a Major Claim. This is great, it means you are immediately informing your reader of your main focus for the essay.")
         elif introduction[len(introduction) -1] == "Major Claim":
             feedback.append("Your introduction ends with a Major Claim. This is great, as you mention your thesis statement right before getting into your arguments.")
@@ -424,26 +425,28 @@ def paragraph_flow_feedback(essay):
     
     for index in range(len(essay_paragraphs_flow)):
         paragraph = essay_paragraphs_flow[index]
-        feedback.append("The flow of Argument Components in Paragraph " + str(paragraph[0]) + " goes: " + str(paragraph) + " where 'None' labels a non-argumentative sentence.")
-        if paragraph[1] == "Claim":
-            feedback.append("Paragraph "+ str(paragraph[0]) + " starts with a Claim. This is good, you immediately bring this sub-arguments main point forward.")
+        paragraph_number = paragraph.pop(0)
+        feedback.append("The flow of Argument Components in Paragraph " + str(paragraph_number) + " goes: " + str(paragraph) + " where 'None' labels a non-argumentative sentence.")
+        if paragraph[0] == "Claim":
+            feedback.append("Paragraph "+ str(paragraph_number) + " starts with a Claim. This is good, you immediately bring this sub-arguments main point forward.")
         elif paragraph[len(paragraph) -1] == "Claim":
-            feedback.append("Paragraph "+ str(paragraph[0]) + " ends with a Claim. This is good, you are ending the paragraph with the point of your previous statements.")
+            feedback.append("Paragraph "+ str(paragraph_number) + " ends with a Claim. This is good, you are ending the paragraph with the point of your previous statements.")
         for index_two in range(len(paragraph) -1):
-            if index_two != 1 and index_two != len(paragraph)-1:
-                if paragraph[index] == "Claim":
+            if index_two != 0 and index_two != len(paragraph)-1:
+                if paragraph[index_two] == "Claim":
                     feedback.append("This paragraph contains a Claim that is neither at the start or the end of the paragraph. This makes it harder for the reader to determine the actual point of this argument")
     
     if not conclusion:
         feedback.append("It appears your Conclusion consists of one or fewer sentences, therefore we cannot comment on the structure of it.")
     else:
+        paragraph_number = conclusion.pop(0)
         feedback.append("The flow of Argument Components in your Conclusion goes:"+ str(conclusion) + " where 'None' labels a non-argumentative sentence.")
-        if conclusion[1] == "MajorClaim":
+        if conclusion[0] == "MajorClaim":
             feedback.append("Your conclusion starts with a Major Claim. This is great, it means you are immediately describing the thesis of your essay.")
         elif conclusion[len(conclusion) -1] == "Major Claim":
             feedback.append("Your conclusion ends with a Major Claim. This is great, it means your thesis statement is left in the reader's mind and is always a great way to close an essay.")
         for index in range(len(conclusion) -1):
-            if index != 1 and index != len(conclusion)-1:
+            if index != 0 and index != len(conclusion)-1:
                 if conclusion[index] == "MajorClaim":
                     feedback.append("Your conclusion contains a Major Claim, however it is not in a great position. Try to keep your Major Claims to the first or last sentence for better readability.")
     
@@ -491,6 +494,22 @@ def argumentative_to_none_argumentative_feedback(essay):
             else:
                 feedback.append("This is poor - while main body paragraphs are larger and more diverse, they still need to be focussed on creating sub-arguments to aid the overall thesis statements in the introduciton and conclusion.")
 
+    return feedback
+
+def results_feedback(essay):
+    feedback = []
+    feedback.append("Here is the list of all your sentences and what type of Argument Component they were")
+    previous_paragraph = 0
+    for index, row in essay.iterrows():
+        if(index != 0):
+
+            current_paragraph = row["Paragraph Number"]
+            if (previous_paragraph != current_paragraph):
+                previous_paragraph = current_paragraph
+                feedback.append("Paragraph " + str(previous_paragraph))
+
+            feedback.append(row["Sentence"] + " = " + row["Argument Component Type"])
+    
     return feedback
 
 def main():

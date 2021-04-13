@@ -36,8 +36,9 @@ def form_process():
     paragraph_count_feedback_list = paragraph_component_count_feedback(essay_dataframe)
     paragraph_flow_feedback_list = paragraph_flow_feedback(essay_dataframe)
     argumentative_sentence_feedback_list = argumentative_to_none_argumentative_feedback(essay_dataframe)
+    sentence_breakdown_list = results_feedback(essay_dataframe)
     
-    return render_template('essay_feedback.html', overall=component_count_feedback_list, paragraph_components = paragraph_count_feedback_list, paragraph_flows = paragraph_flow_feedback_list, argumentative = argumentative_sentence_feedback_list)
+    return render_template('essay_feedback.html', overall=component_count_feedback_list, paragraph_components = paragraph_count_feedback_list, paragraph_flows = paragraph_flow_feedback_list, argumentative = argumentative_sentence_feedback_list, breakdown = sentence_breakdown_list)
 
 def component_identification(essay):
     copy_of_essay = essay.copy()

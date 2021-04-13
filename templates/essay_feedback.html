@@ -21,6 +21,13 @@ article {
 </head>
 <body>
 
+    <h1> Sentence Breakdown </h1>
+    <article>
+        {% for i in breakdown %}
+            <h2>{{ i }}</h2>
+        {% endfor %}
+    </article>
+
     <h1> Overall Feedback </h1>
     <article>
         {% for i in overall %}
