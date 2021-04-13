@@ -23,6 +23,7 @@ from sklearn.naive_bayes import MultinomialNB
 from nltk.tag.stanford import StanfordPOSTagger
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
+from fuzzywuzzy import fuzz
 
 nltk.download('averaged_perceptron_tagger')
 
@@ -206,17 +207,31 @@ def backward_indicator_feature(data):
 def thesis_indicator_feature(data):
     #in my opinion/I believe indicate a component after the indicator may be a major claim
 
-    thesis_indicators = ['in my opinion','in my honest opinion' ,'i believe', 'i firmly believe', 'i strongly believe']
+    thesis_indicators = ['in my opinion','i believe']
     
     presence_of_indicators = []
     
     for index, row in data.iterrows():
         lower_case_sentence = row['Sentence'].lower()
+        sentence_tokens = nltk.word_tokenize(lower_case_sentence)
         indicator_present = False
         
         for i in range(len(thesis_indicators)):
-            if (lower_case_sentence.find(thesis_indicators[i]) != -1):
-                indicator_present = True
+            for j in range(len(sentence_tokens)):
+                if (j < len(sentence_tokens) - 3):
+                    phrase = sentence_tokens[j] + " " + sentence_tokens[j+1] + " " + sentence_tokens[j+2] + " " + sentence_tokens[j+3]
+                elif (j == len(sentence_tokens) - 3):
+                    phrase = sentence_tokens[j] + " " + sentence_tokens[j+1] + " " + sentence_tokens[j+2]
+                elif(j == len(sentence_tokens) - 2):
+                    phrase = sentence_tokens[j] + " " + sentence_tokens[j+1]
+                else :
+                    phrase = sentence_tokens[j]
+
+                if (fuzz.token_sort_ratio(thesis_indicators[i], phrase) > 75):
+                    indicator_present = True
+                    break
+            if (indicator_present == True):
+                break
         
         if indicator_present == True:
             presence_of_indicators.append(1)
@@ -330,6 +345,7 @@ def main():
     print('Actual Result Matrix:')
     print(c_m_true)
 
+main()
 
 # In[ ]:
 

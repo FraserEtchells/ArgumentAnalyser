@@ -1,22 +1,53 @@
 <!DOCTYPE html>
 <html>
+<head>
+<style>
+body {
+    background-color: rgb(47, 71, 204);
+    text-align: center;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+article {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    color: rgb(0, 0, 0);
+    background-color: #ffffff;
+}
+</style>
+</head>
+<body>
+
     <h1> Overall Feedback </h1>
-    {% for i in overall %}
-        <h2>{{ i }}</h2>
-    {% endfor %}
+    <article>
+        {% for i in overall %}
+            <h2>{{ i }}</h2>
+        {% endfor %}
+    </article>
 
     <h1>Paragraph Based Feedback</h1>
-    {% for i in paragraph_components %}
-        <h2>{{ i }}</h2>
-    {% endfor %}
+    <article>
+        {% for i in paragraph_components %}
+            <h2>{{ i }}</h2>
+        {% endfor %}
+    </article>
+    
 
     <h1>Paragraph Flow Feedback</h1>
-    {% for i in paragraph_flows %}
-        <h2>{{ i }}</h2>
-    {% endfor %}
+    <article>
+        {% for i in paragraph_flows %}
+            <h2>{{ i }}</h2>
+        {% endfor %}
+    </article>
 
     <h1>Argumentative Content Feedback</h1>
-    {% for i in argumentative %}
-        <h2>{{ i }}</h2>
-    {% endfor %}
+    <article>
+        {% for i in argumentative %}
+            <h2>{{ i }}</h2>
+        {% endfor %}
+    </article>
+</body>
 </html>
