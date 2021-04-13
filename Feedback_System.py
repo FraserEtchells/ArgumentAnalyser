@@ -228,7 +228,7 @@ def average_paragraph_component_count(data):
     return average_major_claims, average_claims, average_premises
     
 #gives feedback based on how the passed essay compares to the corpus' average results. Do this in the form of ratios to ensure longer essays will be marked appropriately.
-def component_count_feedback(train, essay):
+def component_count_feedback(essay):
     average_component_count_tuple = (2,3,8)
     essay_component_count_tuple = component_count_total(essay)
     
@@ -260,7 +260,7 @@ def component_count_feedback(train, essay):
     return feedback
 
 
-def paragraph_component_count_feedback(train, essay):
+def paragraph_component_count_feedback(essay):
     #originally, we used functions to derive these results (which are the same as the dataset is static) which vastly increases run times.
     average_introduction_component_tuple = (0,1,0,0)
     average_conclusion_component_tuple = (0,1,1,0)
