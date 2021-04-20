@@ -109,9 +109,6 @@ def main():
     train = pd.read_pickle("./train.pkl")
     test = pd.read_pickle("./test.pkl")
 
-    test_essay_id = 4
-    test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
-
     position_features(train)
     token_features(train)
     similarity_features(train)
@@ -120,7 +117,7 @@ def main():
     token_features(test)
     similarity_features(test)
 
-    feature_columns=['Paragraph Number', 'Sentence', 'Sentence Similarity To Prompt', 'Most Common POS Token']
+    feature_columns=['Sentence', 'Sentence Similarity To Prompt','Most Common POS Token' ]
 
     tf = TfidfVectorizer(max_features = 800,strip_accents = 'ascii',stop_words = 'english',)
     le = preprocessing.LabelEncoder()
@@ -163,12 +160,11 @@ def main():
     predictions = naive_bayes.predict(x_new_final)
 
     test['Predicted Argumentative Label'] = predictions
-    test.to_pickle("essay_components_identified.pkl")
 
-    pickle.dump(tf, open("tfidf.pickle", "wb"))
-    pickle.dump(pos_encoder, open("pos_encoder.pickle", "wb"))
-    pickle.dump(le, open("arg_label_encoder.pickle", "wb"))
-    pickle.dump(naive_bayes, open("component_identification_model.pickle", "wb"))
+    #pickle.dump(tf, open("tfidf.pickle", "wb"))
+    #pickle.dump(pos_encoder, open("pos_encoder.pickle", "wb"))
+    #pickle.dump(le, open("arg_label_encoder.pickle", "wb"))
+    #pickle.dump(naive_bayes, open("component_identification_model.pickle", "wb"))
 
     baseline = predictions
     baseline = np.where(baseline < 1, 1, baseline)
@@ -184,6 +180,8 @@ def main():
     print('Baseline Recall score: ', recall_score(y_new.values.ravel(), baseline, average='weighted'))
     print('Confusion Matrix:')
     print(c_m)
+
+main()
 
 
 # In[ ]:

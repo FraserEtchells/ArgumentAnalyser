@@ -1,7 +1,8 @@
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
-print(fuzz.token_sort_ratio("in my opinion", "in opinion my honest"))
-print(fuzz.token_sort_ratio("in my opinion", "in my honest opinion"))
-print(fuzz.token_sort_ratio("in my opinion", "opinion in my"))
-print(fuzz.token_sort_ratio("in my opinion", "opinion"))
+precision = 0.8104
+recall = 0.8115
+
+f1 = 2 * ((precision * recall) / (precision + recall))
+print(f1)

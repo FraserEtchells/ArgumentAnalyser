@@ -20,6 +20,7 @@ import string
 from sklearn_pandas import DataFrameMapper
 from sklearn import preprocessing
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
 from nltk.tag.stanford import StanfordPOSTagger
 from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
@@ -111,9 +112,32 @@ def positional_features(data):
             within_conclusion.append(0)
     data['Sentence Within Introduction'] = within_introduction
     data['Sentence Within Conclusion'] = within_conclusion
+
+    first_sentence = []
+    last_sentence = []
+
+    for index, row in data.iterrows():
+        essay_id = row['Essay ID']
+        paragraph_number = row['Paragraph Number']
+        curr_sentence = row['Sentence']
+        sentence_list = data.loc[(data['Essay ID'] == essay_id) & (data["Paragraph Number"] == paragraph_number), "Sentence"].values.tolist()
+        
+        if (curr_sentence == sentence_list[0]):
+            first_sentence.append(1)
+        else:
+            first_sentence.append(0)
+        
+        if(curr_sentence == sentence_list[len(sentence_list)-1]):
+            last_sentence.append(1)
+        else:
+            last_sentence.append(0)
+    
+    data['First Sentence In Paragraph'] = first_sentence
+    data['Last Sentence In Paragraph'] = last_sentence
     
     number_of_components_proceeding = []
     number_of_components_preceeding = []
+    number_of_total_components = []
     
     #Go through each essay and each paragraph. Total number of components in the paragraph = all sentences in the paragraph
     #Want to extract the order of components
@@ -124,6 +148,7 @@ def positional_features(data):
             curr_paragraph = curr_essay.loc[(curr_essay['Paragraph Number'] == curr_paragraph_number + 1)]
             total_components_in_paragraph = len(curr_paragraph.index)
             for curr_sentence_number in range(total_components_in_paragraph):
+                number_of_total_components.append(total_components_in_paragraph)
                 number_of_components_proceeding.append(total_components_in_paragraph - (curr_sentence_number+1))
                 number_of_components_preceeding.append(curr_sentence_number)
                 
@@ -162,7 +187,7 @@ def first_person_indicators_features(data):
 def forward_indicator_feature(data):
     #therefore/thus/consequently indicate the component after the indicator may be a claim
     #take each word, make a copy lowercase, check if it is in list
-    forward_indicators = ['therefore' , 'thus', 'consequently']
+    forward_indicators = ['therefore' , 'thus', 'consequently'] 
     presence_of_indicators = []
     for index, row in data.iterrows():
         sentence = row['Sentence']
@@ -244,10 +269,8 @@ def main():
     train = pd.read_pickle("./train.pkl")
     test = pd.read_pickle("./test.pkl")
 
-    test_essay_id = 4
-    test_essay = test.loc[(test['Essay ID'] == test_essay_id)]
-
-    feature_columns=['Lemmatized Sentence','Paragraph Number', 'Sentence Within Introduction', 'Sentence Within Conclusion', 'Number of Proceeding Components', 'Number of Preceding Components' , 'First Person Indicator Present', 'First Person Indicator Count', 'Forward Indicator Present', 'Backward Indicator Present', 'Thesis Indicator Present']
+    feature_columns=['Lemmatized Sentence','Sentence Within Introduction', 'Sentence Within Conclusion', 'First Sentence In Paragraph', 'Last Sentence In Paragraph','Number of Proceeding Components', 'Number of Preceding Components', 'First Person Indicator Present', 'First Person Indicator Count', 'Forward Indicator Present', 'Backward Indicator Present', 'Thesis Indicator Present']
+    #removed 'Paragraph Number' and 'Lemmatized Sentence','Sentence Within Introduction', 'Sentence Within Conclusion', 'First Sentence In Paragraph', 'Last Sentence In Paragraph','Number of Proceeding Components', 'Number of Preceding Components', 'First Person Indicator Present', 'First Person Indicator Count', 'Forward Indicator Present', 'Backward Indicator Present', 'Thesis Indicator Present' from feature columns
     for curr_tag in list_of_pos_tags:
         feature_columns.append("Distribution of " + curr_tag + " POS Tag")
 
@@ -261,7 +284,7 @@ def main():
     test.drop(non_argumentative_test, inplace = True)
     test.reset_index(drop=True, inplace=True)
 
-    tokenisation_features(train)
+    tokenisation_features(train) # should be ran no matter what
     part_of_speech_features(train)
     positional_features(train)
     first_person_indicators_features(train)
@@ -277,15 +300,6 @@ def main():
     backward_indicator_feature(test)
     thesis_indicator_feature(test)
 
-    tokenisation_features(test_essay)
-    part_of_speech_features(test_essay)
-    positional_features(test_essay)
-    first_person_indicators_features(test_essay)
-    forward_indicator_feature(test_essay)
-    backward_indicator_feature(test_essay)
-    thesis_indicator_feature(test_essay)
-
-
 
 #Y should be the argument component type label encoded - labels being MajorClaim, Claim and Premise
     component_type = preprocessing.LabelEncoder()
@@ -294,9 +308,7 @@ def main():
 
     x = train.loc[:, feature_columns]
     y = train.loc[:, ['Argument Component Type']]
-    print(y)
     y_encoded = component_type.transform(y)
-    print(y_encoded)
     y['Argument Component Type'] = y_encoded
 
     x_new = test.loc[:, feature_columns]
@@ -320,14 +332,15 @@ def main():
     x_new_concat = pd.concat([x_new, x_new_vectorized_dataframe], axis=1)
     x_new_final = x_new_concat.drop(['Lemmatized Sentence'], axis=1)
 
+
     naive_bayes = MultinomialNB()
-    naive_bayes.fit(x_final,y.values.ravel())
+    naive_bayes.fit(x_final, y.values.ravel())
 
     predictions = naive_bayes.predict(x_new_final)
 
-    pickle.dump(tf, open("tfidf_lemmatized.pickle", "wb"))
-    pickle.dump(component_type, open("component_type_encoder.pickle", "wb"))
-    pickle.dump(naive_bayes, open("component_classification_model.pickle", "wb"))
+    #pickle.dump(tf, open("tfidf_lemmatized.pickle", "wb"))
+    #pickle.dump(component_type, open("component_type_encoder.pickle", "wb"))
+    #pickle.dump(naive_bayes, open("component_classification_model.pickle", "wb"))
 
     baseline = predictions
     baseline = np.where(baseline < 2, 2, baseline)
@@ -341,10 +354,14 @@ def main():
     print('Baseline Accuracy score: ', accuracy_score(y_new.values.ravel(), baseline))
     print('Baseline Precision score: ', precision_score(y_new.values.ravel(), baseline, average='weighted'))
     print('Baseline Recall score: ', recall_score(y_new.values.ravel(), baseline, average='weighted'))
+
     print('Confusion Matrix:')
     print(c_m)
     print('Actual Result Matrix:')
     print(c_m_true)
+
+
+main()
 # In[ ]:
 
 
