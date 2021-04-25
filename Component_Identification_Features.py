@@ -181,8 +181,6 @@ def main():
     print('Confusion Matrix:')
     print(c_m)
 
-main()
-
 
 # In[ ]:
 
