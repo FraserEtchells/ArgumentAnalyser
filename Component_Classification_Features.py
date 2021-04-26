@@ -54,7 +54,9 @@ def tokenisation_features(data):
     data['Lemmatized Sentence Bigrams'] = bigrams
 
 def part_of_speech_features(data):
+    #Extract the POS tags in a sentence, then see what percentage of the sentence is made up of words of each tag.
     
+    #creates several lists of these POS tags in order to reduce time and make code less bloated
     for tag in list_of_pos_tags:
         string_tag = "Distribution of " + tag + " POS Tag"
         data[string_tag] = 0.0
@@ -94,6 +96,7 @@ def positional_features(data):
     within_conclusion = []
     essays_in_dataframe = set()
     
+    #Iterate through each sentence and see if the paragraph is either the introduction (2 as 1 = prompt) or conclusion (by checking if the paragraph is number is equal to the total number of paragraphs within an essay)
     #When iterating through all of the data, also append the essay id to a list, with only unique values, so we know the essays being used in this block.
     for index, row in data.iterrows():
         paragraph = row['Paragraph Number']
@@ -116,6 +119,7 @@ def positional_features(data):
     first_sentence = []
     last_sentence = []
 
+#creates a list of all the sentences within the same paragraph of the same essay. If the current essay is the first or last element in the list, then mark the corresponding variable as true.
     for index, row in data.iterrows():
         essay_id = row['Essay ID']
         paragraph_number = row['Paragraph Number']
@@ -156,6 +160,7 @@ def positional_features(data):
     data['Number of Preceding Components'] = number_of_components_preceeding
             
 def first_person_indicators_features(data):
+    #Check the presence and count of first-person indicators in each sentence.
     
     first_person_indicators = set(['i', 'myself', 'my', 'mine'])
     presence_of_indicators = []
@@ -185,6 +190,7 @@ def first_person_indicators_features(data):
     
 
 def forward_indicator_feature(data):
+    #Extract whether or not a forward indicator is present in sentence
     #therefore/thus/consequently indicate the component after the indicator may be a claim
     #take each word, make a copy lowercase, check if it is in list
     forward_indicators = ['therefore' , 'thus', 'consequently'] 
@@ -208,6 +214,7 @@ def forward_indicator_feature(data):
     data['Forward Indicator Present'] = presence_of_indicators
     
 def backward_indicator_feature(data):
+    #Extacts whether a backward indicator is present or not
     #in addition/because/additionally indicate the component after the indicator may be a premise
    
     backward_indicators = ['in addition', 'because', 'additionally']
@@ -230,6 +237,7 @@ def backward_indicator_feature(data):
         
     
 def thesis_indicator_feature(data):
+    #Extracts whether a thesis indicator is found in each sentence.
     #in my opinion/I believe indicate a component after the indicator may be a major claim
 
     thesis_indicators = ['in my opinion','i believe']
@@ -241,6 +249,7 @@ def thesis_indicator_feature(data):
         sentence_tokens = nltk.word_tokenize(lower_case_sentence)
         indicator_present = False
         
+        #splits the sentences into 4 word chunks. Then compares these chunks to the phrases, if they reach an acceptable parameter of 72% similarity the presence of the indicator is noted.
         for i in range(len(thesis_indicators)):
             for j in range(len(sentence_tokens)):
                 if (j < len(sentence_tokens) - 3):
@@ -265,7 +274,8 @@ def thesis_indicator_feature(data):
             
     data['Thesis Indicator Present'] = presence_of_indicators
 
-def main():              
+def main(): 
+    #For testing purposes - do not run unless testing the performance of the model           
     train = pd.read_pickle("./train.pkl")
     test = pd.read_pickle("./test.pkl")
 
@@ -338,6 +348,7 @@ def main():
 
     predictions = naive_bayes.predict(x_new_final)
 
+    #If any changes occur to the model or tfidf vectorizer, they must be exported again
     #pickle.dump(tf, open("tfidf_lemmatized.pickle", "wb"))
     #pickle.dump(component_type, open("component_type_encoder.pickle", "wb"))
     #pickle.dump(naive_bayes, open("component_classification_model.pickle", "wb"))

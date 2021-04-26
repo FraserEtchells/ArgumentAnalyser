@@ -28,6 +28,7 @@ nltk.download('averaged_perceptron_tagger')
 pos_tags = [',','.',':','``',"''",'CC','CD','DT','EX','FW','IN','JJ','JJR','JJS','LS','MD','NN','NNS','NNP','NNPS','PDT','POS','PRP','PRP$','RB','RBR','RBS','RP','SYM','TO','UH','VB','VBD','VBG','VBN','VBP','VBZ','WDT','WP','WP$','WRB']
    
 def position_features(data):
+    #iterate through essays provided in data variable and find the start and end position of each sentence within the paragraph they are contained in
     dataframe = data
     
     start_positions = []
@@ -35,7 +36,9 @@ def position_features(data):
     for index, row in dataframe.iterrows():
         paragraph = row['Source Paragraph']
         sentence = row['Sentence']
+        #find returns position of the first character within the sentence.
         start_pos = paragraph.find(sentence)
+        #finds the end of the sentence
         end_pos=sentence.find(sentence[-1:]) + start_pos
         
         start_positions.append(start_pos)
@@ -46,6 +49,7 @@ def position_features(data):
         
                
 def token_features(data):
+    #iteratre through essays provided in data variable and extract the POS tags via the nltk library tokenize functions
     dataframe = data
     
     part_of_speech_tokens = []
@@ -57,6 +61,7 @@ def token_features(data):
         sentence_tokens = nltk.word_tokenize(sentence)
         pos_tokens = nltk.pos_tag(sentence_tokens)
         
+        #split the words and there corresponding tags into two seperate lists.
         tokens, pos_tags = zip(*pos_tokens)
         
         part_of_speech_tokens.append(pos_tags)
@@ -67,6 +72,7 @@ def token_features(data):
 
 
 def similarity_features(data):
+    #iterate through essays provided in the data variable and compare each sentence to the prompts
     dataframe = data
     nlp = spacy.load("en_core_web_md")
     
@@ -106,6 +112,7 @@ def similarity_features(data):
     dataframe['Sentence Similarity To Prompt'] = similarities
 
 def main():
+    #For testing purposes - do not run unless testing the performance of the model
     train = pd.read_pickle("./train.pkl")
     test = pd.read_pickle("./test.pkl")
 
@@ -161,6 +168,7 @@ def main():
 
     test['Predicted Argumentative Label'] = predictions
 
+    #If any adjustments are made to the model or tfidf/pos encoders, must be exported again
     #pickle.dump(tf, open("tfidf.pickle", "wb"))
     #pickle.dump(pos_encoder, open("pos_encoder.pickle", "wb"))
     #pickle.dump(le, open("arg_label_encoder.pickle", "wb"))

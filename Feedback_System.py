@@ -261,6 +261,7 @@ def component_count_feedback(essay):
 
 
 def paragraph_component_count_feedback(essay):
+    #Compares the count of argument components in each paragraph to average results.
     #originally, we used functions to derive these results (which are the same as the dataset is static) which vastly increases run times.
     average_introduction_component_tuple = (0,1,0,0)
     average_conclusion_component_tuple = (0,1,1,0)
@@ -402,11 +403,13 @@ def paragraph_component_sequence(essay):
     return essay_paragraphs_flow
 
 def paragraph_flow_feedback(essay):
+    #Provide the flow of Argument Components in each paragraph.
     essay_paragraphs_flow = paragraph_component_sequence(essay)
     introduction = essay_paragraphs_flow.pop(0)
     conclusion = essay_paragraphs_flow.pop(len(essay_paragraphs_flow) -1)
     
     feedback = []
+
     if not introduction:
         feedback.append("It appears your Introduction consists of one or fewer sentences, therefore we cannot comment on the structure of it.")
     else:
@@ -424,6 +427,7 @@ def paragraph_flow_feedback(essay):
                     feedback.append("Your introduction contains a Major Claim, however it is not in a great position. Try to keep your Major Claims to the first or last sentence for better readability.")
     
     for index in range(len(essay_paragraphs_flow)):
+        #Main body paragraphs should start or end with a Claim
         paragraph = essay_paragraphs_flow[index]
         paragraph_number = paragraph.pop(0)
         feedback.append("The flow of Argument Components in Paragraph " + str(paragraph_number) + " goes: " + str(paragraph) + " where 'None' labels a non-argumentative sentence.")
@@ -439,6 +443,7 @@ def paragraph_flow_feedback(essay):
     if not conclusion:
         feedback.append("It appears your Conclusion consists of one or fewer sentences, therefore we cannot comment on the structure of it.")
     else:
+        #Conclusions should start or end with a major claim
         paragraph_number = conclusion.pop(0)
         feedback.append("The flow of Argument Components in your Conclusion goes:"+ str(conclusion) + " where 'None' labels a non-argumentative sentence.")
         if conclusion[0] == "MajorClaim":
@@ -453,6 +458,7 @@ def paragraph_flow_feedback(essay):
     return feedback
 
 def argumentative_to_none_argumentative_ratios(essay):
+    #calculate the ratio of Argumentative sentences to non-argumentative sentences.
     total_paragraphs = essay["Total Paragraphs"].values[0]
     argumentative_to_non_argumentative_ratios = []
     
@@ -471,6 +477,7 @@ def argumentative_to_none_argumentative_ratios(essay):
     return argumentative_to_non_argumentative_ratios
 
 def argumentative_to_none_argumentative_feedback(essay):
+    #Provide argumentative feedback - count ratio of argumentative to non-argumentative sentences in each paragraph
     ratio_list = argumentative_to_none_argumentative_ratios(essay)
     
     feedback = []
@@ -497,6 +504,7 @@ def argumentative_to_none_argumentative_feedback(essay):
     return feedback
 
 def results_feedback(essay):
+    #Compile the feedback for the overall sentence by sentence breakdown - lists each sentence and what Argument Component they are.
     feedback = []
     feedback.append("Here is the list of all your sentences and what type of Argument Component they were")
     previous_paragraph = 0
@@ -513,6 +521,7 @@ def results_feedback(essay):
     return feedback
 
 def main():
+    #Only run for testing purposes
     train = pd.read_pickle("./train.pkl")
     test = pd.read_pickle("./test.pkl")
 
