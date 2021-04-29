@@ -351,7 +351,7 @@ def main():
     #If any changes occur to the model or tfidf vectorizer, they must be exported again
     #pickle.dump(tf, open("tfidf_lemmatized.pickle", "wb"))
     #pickle.dump(component_type, open("component_type_encoder.pickle", "wb"))
-    pickle.dump(naive_bayes, open("component_classification_model.pickle", "wb"))
+    #pickle.dump(naive_bayes, open("component_classification_model.pickle", "wb"))
 
     baseline = predictions
     baseline = np.where(baseline < 2, 2, baseline)
