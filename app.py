@@ -116,7 +116,7 @@ def component_classification(essay):
     tfidf_file.close()
 
     #extract features from essay dataframe - loop allows all of the possible POS Tags to be neatly and quickly retrieved.
-    feature_columns=['Lemmatized Sentence','Paragraph Number', 'Sentence Within Introduction', 'Sentence Within Conclusion', 'Number of Proceeding Components', 'Number of Preceding Components' , 'First Person Indicator Present', 'First Person Indicator Count', 'Forward Indicator Present', 'Backward Indicator Present', 'Thesis Indicator Present']
+    feature_columns=['Lemmatized Sentence','Sentence Within Introduction', 'Sentence Within Conclusion', 'Number of Proceeding Components', 'Number of Preceding Components' , 'First Person Indicator Present', 'First Person Indicator Count', 'Forward Indicator Present', 'Backward Indicator Present', 'Thesis Indicator Present']
     for curr_tag in list_of_pos_tags:
         feature_columns.append("Distribution of " + curr_tag + " POS Tag")
     essay_featurised = copy_of_essay.loc[:, feature_columns]
